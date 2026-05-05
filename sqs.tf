@@ -22,3 +22,20 @@ resource "aws_lambda_event_source_mapping" "sqs_to_lambda" {
   batch_size       = 5 
   function_response_types = ["ReportBatchItemFailures"] 
 }
+
+resource "aws_cloudwatch_metric_alarm" "dlq_alarm" {
+  alarm_name          = "dlq-message-alarm"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 1
+  metric_name         = "ApproximateNumberOfMessagesVisible"
+  namespace           = "AWS/SQS"
+  period              = 60
+  statistic           = "Sum"
+  threshold           = 0   
+  dimensions = {
+    QueueName = aws_sqs_queue.deadletter_queue.name
+  }
+  alarm_actions = [aws_sns_topic.tu_sns_topic.arn]
+}
+
+

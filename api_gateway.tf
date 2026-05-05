@@ -1,4 +1,4 @@
-resource "aws_apigatewayv2_api" "api-http" {
+resource "aws_apigatewayv2_api" "api_http" {
   name          = "mi-api"
   protocol_type = "HTTP"
 
@@ -10,23 +10,22 @@ resource "aws_apigatewayv2_api" "api-http" {
 
 }
 
-resource "aws_apigatewayv2_integration" "integration-http" {
-  api_id                 = aws_apigatewayv2_api.api-http.id
-  integration_type       = "HTTP_PROXY"
-  integration_method     = "POST" 
-  integration_uri        = "https://infra.com/upload" 
-  payload_format_version = "2.0" 
+resource "aws_apigatewayv2_integration" "integration_http" {
+  api_id                 = aws_apigatewayv2_api.api_http.id
+  integration_type       = "AWS_PROXY"
+  integration_uri        = aws_lambda_function.upload_lambda.invoke_arn
+  payload_format_version = "2.0"
 }
 
-resource "aws_apigatewayv2_route" "route-http" {
-  api_id    = aws_apigatewayv2_api.api-http.id
+resource "aws_apigatewayv2_route" "route_http" {
+  api_id    = aws_apigatewayv2_api.api_http.id
   route_key = "POST /upload"
-  target = "integrations/${aws_apigatewayv2_integration.integration-http.id}"
+  target = "integrations/${aws_apigatewayv2_integration.integration_http.id}"
 }
 
-resource "aws_apigatewayv2_stage" "stage-http" {
-  api_id = aws_apigatewayv2_api.api-http.id
-  name   = "$stage"
+resource "aws_apigatewayv2_stage" "stage_http" {
+  api_id      = aws_apigatewayv2_api.api_http.id
+  name        = "$default"
   auto_deploy = true
 
   default_route_settings {
@@ -50,4 +49,12 @@ resource "aws_apigatewayv2_stage" "stage-http" {
 resource "aws_cloudwatch_log_group" "api_logs" {
   name              = "/aws/apigateway/http-api-logs"
   retention_in_days = 14
+}
+
+resource "aws_lambda_permission" "allow_apigw_invoke" {
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.upload_lambda.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_apigatewayv2_api.api_http.execution_arn}/*/*"
 }

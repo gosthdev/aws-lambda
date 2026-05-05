@@ -31,9 +31,32 @@ resource "aws_lambda_function" "upload_lambda" {
   ]
 }
 
-
 data "archive_file" "lambda_zip" {
   type        = "zip"
   source_dir  = "src/lambda" 
   output_path = "src/function.zip"
+}
+
+resource "aws_cloudwatch_log_group" "lambda_logs" {
+  name              = "/aws/lambda/upload-lambda"
+  retention_in_days = 14 
+}
+
+resource "aws_security_group" "sg_upload_lambda" {
+  name        = "sg-upload-lambda"
+  description = "Permite a la lambda comunicarse con VPCEs de S3"
+  vpc_id      = aws_vpc.main_vpc.id
+
+  egress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    prefix_list_ids = [data.aws_prefix_list.s3.id]
+  }
+}
+
+data "aws_region" "current_lambda" {}
+
+data "aws_prefix_list" "s3" {
+  name = "com.amazonaws.${data.aws_region.current_lambda.name}.s3"
 }

@@ -14,7 +14,7 @@ resource "aws_apigatewayv2_integration" "integration-http" {
   api_id                 = aws_apigatewayv2_api.api-http.id
   integration_type       = "HTTP_PROXY"
   integration_method     = "POST" 
-  integration_uri        = "https://infra .com/upload" 
+  integration_uri        = "https://infra.com/upload" 
   payload_format_version = "2.0" 
 }
 
@@ -46,6 +46,7 @@ resource "aws_apigatewayv2_stage" "stage-http" {
   }
 }   
 
+#Revisar bonito
 resource "aws_cloudwatch_log_group" "api_logs" {
   name              = "/aws/apigateway/http-api-logs"
   retention_in_days = 14

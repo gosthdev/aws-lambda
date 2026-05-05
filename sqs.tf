@@ -1,6 +1,6 @@
 resource "aws_sqs_queue" "main_queue" {
   name = "image-processor-${terraform.workspace}-image-queue"
-  max_message_size          = 2048
+  # max_message_size          = 2048
   delay_seconds             = 90
   visibility_timeout_seconds = 360
   message_retention_seconds  = 86400
@@ -14,9 +14,5 @@ resource "aws_sqs_queue" "main_queue" {
 resource "aws_sqs_queue" "deadletter_queue" {
   name                      = "image-processor-${terraform.workspace}-image-dlq"
   message_retention_seconds = 1209600
-  max_message_size          = 2048
-  delay_seconds             = 90
-  visibility_timeout_seconds = 360
-  receive_wait_time_seconds  = 20
 }
 

@@ -1,4 +1,4 @@
-resource "aws_vpc_endpoint" "s3-gateway" {
+resource "aws_vpc_endpoint" "s3_gateway" {
   vpc_id       = aws_vpc.main_vpc.id
   service_name = "com.amazonaws.us-east-1.s3"
   route_table_ids = [aws_route_table.private_rt.id]

@@ -25,22 +25,28 @@ resource "aws_subnet" "private_subnet_b" {
   }
 }
 
-resource "aws_route_table" "private_rt" {
+resource "aws_route_table" "private_rt_a" {
   vpc_id = aws_vpc.main_vpc.id
-
   tags = {
-    Name = "private-rt"
+    Name = "private-rt-a"
+  }
+}
+
+resource "aws_route_table" "private_rt_b" {
+  vpc_id = aws_vpc.main_vpc.id
+  tags = {
+    Name = "private-rt-b"
   }
 }
 
 resource "aws_route_table_association" "private_rt_a" {
   subnet_id      = aws_subnet.private_subnet_a.id
-  route_table_id = aws_route_table.private_rt.id
+  route_table_id = aws_route_table.private_rt_a.id
 }
 
 resource "aws_route_table_association" "private_rt_b" {
   subnet_id      = aws_subnet.private_subnet_b.id
-  route_table_id = aws_route_table.private_rt.id
+  route_table_id = aws_route_table.private_rt_b.id
 }
 
 resource "aws_internet_gateway" "igw" {

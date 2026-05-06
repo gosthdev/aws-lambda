@@ -45,7 +45,7 @@ resource "aws_security_group" "sqs_vpce_sg" {
 
 resource "aws_vpc_endpoint" "sqs_interface" {
   vpc_id              = aws_vpc.main_vpc.id
-  service_name        = "com.amazonaws.${data.aws_region.current_lambda.name}.sqs"
+  service_name        = "com.amazonaws.${data.aws_region.current_lambda.region}.sqs"
   vpc_endpoint_type   = "Interface"
   subnet_ids          = [
     aws_subnet.private_subnet_a.id,

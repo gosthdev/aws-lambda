@@ -18,7 +18,7 @@ resource "aws_sqs_queue" "deadletter_queue" {
 
 resource "aws_lambda_event_source_mapping" "sqs_to_lambda" {
   event_source_arn = aws_sqs_queue.main_queue.arn
-  function_name    = aws_lambda_function.xxxxx # Cambiar por la lambda 
+  function_name    = aws_lambda_function.crop_lambda.arn
   batch_size       = 5 
   function_response_types = ["ReportBatchItemFailures"] 
 }
@@ -35,7 +35,31 @@ resource "aws_cloudwatch_metric_alarm" "dlq_alarm" {
   dimensions = {
     QueueName = aws_sqs_queue.deadletter_queue.name
   }
-  alarm_actions = [aws_sns_topic.tu_sns_topic.arn]
+  alarm_actions = [aws_sns_topic.sns_topic.arn]
 }
 
+data "aws_iam_policy_document" "allow_s3_send_to_sqs_doc" {
+  statement {
+    effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["s3.amazonaws.com"]
+    }
+    actions   = ["sqs:SendMessage"]
+    resources = [aws_sqs_queue.main_queue.arn]
+    condition {
+      test     = "ArnEquals"
+      variable = "aws:SourceArn"
+      values   = [aws_s3_bucket.s3_bucket.arn]
+    }
+  }
+}
 
+resource "aws_sqs_queue_policy" "allow_s3_send_to_sqs" {
+  queue_url = aws_sqs_queue.main_queue.id
+  policy    = data.aws_iam_policy_document.allow_s3_send_to_sqs_doc.json
+}
+
+resource "aws_sns_topic" "sns_topic" {
+  name = "image-processing-alarms"
+}

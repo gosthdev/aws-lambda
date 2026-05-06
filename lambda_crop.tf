@@ -37,12 +37,12 @@ data "archive_file" "crop_lambda_zip" {
 }
 
 resource "aws_cloudwatch_log_group" "crop_lambda_logs" {
-  name              = "/aws/lambda/lambda-crop"
+  name              = "/aws/lambda/crop-lambda"
   retention_in_days = 14
 }
 
 resource "aws_security_group" "sg_crop_lambda" {
-  name        = "sg-crop-lambda"
+  name        = "crop-lambda"
   description = "Permite a la lambda comunicarse con VPCEs de S3 y SQS"
   vpc_id      = aws_vpc.main_vpc.id
 
@@ -57,6 +57,7 @@ resource "aws_security_group" "sg_crop_lambda" {
     from_port       = 443
     to_port         = 443
     protocol        = "tcp"
-    security_groups = [aws_security_group.sqs_vpce_sg.id]
+    cidr_blocks     = ["10.0.0.0/16"]
   }
+  
 }

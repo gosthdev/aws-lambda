@@ -1,6 +1,6 @@
 resource "aws_vpc_endpoint" "s3_gateway" {
   vpc_id       = aws_vpc.main_vpc.id
-  service_name = "com.amazonaws.us-east-1.s3"
+  service_name = "com.amazonaws.${data.aws_region.current_lambda.region}.s3"
   route_table_ids = [
     aws_route_table.private_rt_a.id,
     aws_route_table.private_rt_b.id
@@ -13,7 +13,10 @@ resource "aws_vpc_endpoint" "s3_gateway" {
         "Effect": "Allow",
         "Principal": "*",
         "Action": ["s3:GetObject", "s3:PutObject"],
-        "Resource": "*"
+        "Resource": [
+          "${aws_s3_bucket.s3_bucket.arn}/uploads/*",
+          "${aws_s3_bucket.s3_bucket.arn}/processed/*"
+        ]
       }
     ]
   })
@@ -21,7 +24,7 @@ resource "aws_vpc_endpoint" "s3_gateway" {
 }
 
 resource "aws_security_group" "sqs_vpce_sg" {
-  name        = "sg-sqs-vpce"
+  name        = "sqs-vpce"
   description = "Permite trafico 443 desde la Lambda de crop al VPCE de SQS"
   vpc_id      = aws_vpc.main_vpc.id
 
@@ -42,7 +45,7 @@ resource "aws_security_group" "sqs_vpce_sg" {
 
 resource "aws_vpc_endpoint" "sqs_interface" {
   vpc_id              = aws_vpc.main_vpc.id
-  service_name        = "com.amazonaws.${data.aws_region.current_lambda.name}.sqs"
+  service_name        = "com.amazonaws.${data.aws_region.current_lambda.region}.sqs"
   vpc_endpoint_type   = "Interface"
   subnet_ids          = [
     aws_subnet.private_subnet_a.id,

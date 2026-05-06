@@ -1,9 +1,9 @@
 resource "aws_lambda_function" "upload_lambda" {
-  filename      = data.archive_file.lambda_zip.output_path
+  filename      = data.archive_file.upload_lambda_zip.output_path
   function_name = "upload-lambda"
   role          = aws_iam_role.lambda_role.arn
   handler       = "index.handler"
-  code_sha256   = data.archive_file.lambda_zip.output_base64sha256
+  code_sha256   = data.archive_file.upload_lambda_zip.output_base64sha256
 
   runtime = "nodejs20.x"
   
@@ -31,9 +31,9 @@ resource "aws_lambda_function" "upload_lambda" {
   ]
 }
 
-data "archive_file" "lambda_zip" {
+data "archive_file" "upload_lambda_zip" {
   type        = "zip"
-  source_dir  = "src/lambda" 
+  source_dir  = "src/lambda_upload" 
   output_path = "src/function.zip"
 }
 

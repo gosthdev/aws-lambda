@@ -42,3 +42,33 @@ resource "aws_route_table_association" "private_rt_b" {
   subnet_id      = aws_subnet.private_subnet_b.id
   route_table_id = aws_route_table.private_rt.id
 }
+
+resource "aws_internet_gateway" "igw" {
+  vpc_id = aws_vpc.main_vpc.id
+
+  tags = {
+    Name = "image-processing-igw"
+  }
+}
+
+resource "aws_subnet" "public_subnet_a" {
+  vpc_id                  = aws_vpc.main_vpc.id
+  cidr_block              = "10.0.1.0/24"
+  availability_zone       = "us-east-1a"
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "Public Subnet AZ-a"
+  }
+}
+
+resource "aws_subnet" "public_subnet_b" {
+  vpc_id                  = aws_vpc.main_vpc.id
+  cidr_block              = "10.0.2.0/24"
+  availability_zone       = "us-east-1b"
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "Public Subnet AZ-b"
+  }
+}

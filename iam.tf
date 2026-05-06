@@ -72,6 +72,16 @@ resource "aws_iam_role" "lambda_crop_role" {
   assume_role_policy = data.aws_iam_policy_document.crop_lambda_policy_doc
 }
 
+resource "aws_iam_role_policy_attachment" "crop_basic_execution_policy" {
+  role       = aws_iam_role.lambda_crop_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_iam_role_policy_attachment" "crop_vpc_access_policy" {
+  role       = aws_iam_role.lambda_crop_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+}
+
 resource "aws_iam_policy" "crop_lambda_policy" {
   name   = "CropLambdaPolicy"
   policy = data.aws_iam_policy_document.crop_lambda_policy_doc.json

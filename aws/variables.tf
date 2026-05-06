@@ -1,13 +1,3 @@
-variable "environment" {
-  type        = string
-  description = "Deployment environment name (dev, qa, prod)."
-
-  validation {
-    condition     = contains(["dev", "qa", "prod"], var.environment)
-    error_message = "environment must be one of: dev, qa, prod."
-  }
-}
-
 variable "project_name" {
   type        = string
   description = "Project name prefix for shared resources."

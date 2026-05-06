@@ -1,5 +1,5 @@
 resource "aws_sqs_queue" "main_queue" {
-  name = "image-processor-${terraform.workspace}-image-queue"
+  name = "${local.name_prefix}-image-queue"
   # max_message_size          = 2048
   # delay_seconds             = 90
   visibility_timeout_seconds = 360
@@ -12,7 +12,7 @@ resource "aws_sqs_queue" "main_queue" {
 }
 
 resource "aws_sqs_queue" "deadletter_queue" {
-  name                      = "image-processor-${terraform.workspace}-image-dlq"
+  name                      = "${local.name_prefix}-image-dlq"
   message_retention_seconds = 1209600
 }
 
@@ -61,5 +61,5 @@ resource "aws_sqs_queue_policy" "allow_s3_send_to_sqs" {
 }
 
 resource "aws_sns_topic" "sns_topic" {
-  name = "image-processing-alarms"
+  name = "${local.name_prefix}-alarms"
 }

@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "s3_bucket" {
-  bucket = "image-processing-bucket-${terraform.workspace}"
+  bucket = local.bucket_name
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "encryption" {

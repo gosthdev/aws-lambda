@@ -10,7 +10,7 @@ data "aws_iam_policy_document" "assume_role" {
 }
 
 resource "aws_iam_role" "lambda_role" {
-  name               = "upload-lambda-role"
+  name               = "upload-lambda-role-${local.environment}"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }
 
@@ -33,7 +33,7 @@ data "aws_iam_policy_document" "s3_upload_policy_doc" {
 }
 
 resource "aws_iam_policy" "s3_upload_policy" {
-  name   = "UploadLambdaS3Policy"
+  name   = "UploadLambdaS3Policy-${local.environment}"
   policy = data.aws_iam_policy_document.s3_upload_policy_doc.json
 }
 
@@ -68,7 +68,7 @@ data "aws_iam_policy_document" "crop_lambda_policy_doc" {
 }
 
 resource "aws_iam_role" "lambda_crop_role" {
-  name               = "crop-lambda-role"
+  name               = "crop-lambda-role-${local.environment}"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }
 
@@ -83,7 +83,7 @@ resource "aws_iam_role_policy_attachment" "crop_vpc_access_policy" {
 }
 
 resource "aws_iam_policy" "crop_lambda_policy" {
-  name   = "CropLambdaPolicy"
+  name   = "CropLambdaPolicy-${local.environment}"
   policy = data.aws_iam_policy_document.crop_lambda_policy_doc.json
 }
 

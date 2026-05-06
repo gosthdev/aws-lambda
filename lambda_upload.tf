@@ -43,7 +43,7 @@ resource "aws_cloudwatch_log_group" "lambda_logs" {
 }
 
 resource "aws_security_group" "sg_upload_lambda" {
-  name        = "sg-upload-lambda"
+  name        = "upload-lambda"
   description = "Permite a la lambda comunicarse con VPCEs de S3"
   vpc_id      = aws_vpc.main_vpc.id
 
@@ -58,5 +58,5 @@ resource "aws_security_group" "sg_upload_lambda" {
 data "aws_region" "current_lambda" {}
 
 data "aws_prefix_list" "s3" {
-  name = "com.amazonaws.${data.aws_region.current_lambda.name}.s3"
+  name = "com.amazonaws.${data.aws_region.current_lambda.region}.s3"
 }

@@ -18,7 +18,7 @@ resource "aws_sqs_queue" "deadletter_queue" {
 
 resource "aws_lambda_event_source_mapping" "sqs_to_lambda" {
   event_source_arn = aws_sqs_queue.main_queue.arn
-  function_name    = aws_lambda_function.xxxxx # Cambiar por la lambda 
+  function_name    = aws_lambda_function.crop_lambda.arn
   batch_size       = 5 
   function_response_types = ["ReportBatchItemFailures"] 
 }

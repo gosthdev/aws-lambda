@@ -140,3 +140,15 @@ resource "aws_nat_gateway" "nat_b" {
     Name = "nat-gateway-b"
   }
 }
+
+resource "aws_route" "private_a_default" {
+  route_table_id         = aws_route_table.private_rt_a.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.nat_a.id
+}
+
+resource "aws_route" "private_b_default" {
+  route_table_id         = aws_route_table.private_rt_b.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.nat_b.id
+}

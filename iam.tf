@@ -69,7 +69,7 @@ data "aws_iam_policy_document" "crop_lambda_policy_doc" {
 
 resource "aws_iam_role" "lambda_crop_role" {
   name               = "crop-lambda-role"
-  assume_role_policy = data.aws_iam_policy_document.crop_lambda_policy_doc
+  assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }
 
 resource "aws_iam_role_policy_attachment" "crop_basic_execution_policy" {

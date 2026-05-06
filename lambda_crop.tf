@@ -25,7 +25,7 @@ resource "aws_lambda_function" "crop_lambda" {
   }
 
   depends_on = [
-    aws_iam_role_policy_attachment.vpc_access_policy,
+    aws_iam_role_policy_attachment.crop_vpc_access_policy,
     aws_cloudwatch_log_group.crop_lambda_logs
   ]
 }

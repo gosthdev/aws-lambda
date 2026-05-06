@@ -1,6 +1,6 @@
 resource "aws_lambda_function" "crop_lambda" {
   filename      = data.archive_file.crop_lambda_zip.output_path
-  function_name = "crop-lambda"
+  function_name = "crop-lambda.${workspace}"
   role          = aws_iam_role.lambda_crop_role.arn
   handler       = "index.handler"
   code_sha256   = data.archive_file.crop_lambda_zip.output_base64sha256

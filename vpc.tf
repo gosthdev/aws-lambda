@@ -96,3 +96,41 @@ resource "aws_route_table_association" "public_rt_b" {
   subnet_id      = aws_subnet.public_subnet_b.id
   route_table_id = aws_route_table.public_rt.id
 }
+
+resource "aws_eip" "nat_eip_a" {
+  domain = "vpc"
+
+  tags = {
+    Name = "nat-eip-a"
+  }
+}
+
+resource "aws_eip" "nat_eip_b" {
+  domain = "vpc"
+
+  tags = {
+    Name = "nat-eip-b"
+  }
+}
+
+resource "aws_nat_gateway" "nat_a" {
+  allocation_id = aws_eip.nat_eip_a.id
+  subnet_id     = aws_subnet.public_subnet_a.id
+
+  depends_on = [aws_internet_gateway.igw]
+
+  tags = {
+    Name = "nat-gateway-a"
+  }
+}
+
+resource "aws_nat_gateway" "nat_b" {
+  allocation_id = aws_eip.nat_eip_b.id
+  subnet_id     = aws_subnet.public_subnet_b.id
+
+  depends_on = [aws_internet_gateway.igw]
+
+  tags = {
+    Name = "nat-gateway-b"
+  }
+}

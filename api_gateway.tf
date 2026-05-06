@@ -1,5 +1,5 @@
 resource "aws_apigatewayv2_api" "api_http" {
-  name          = "mi-api"
+  name          = "api-http.${workspace}"
   protocol_type = "HTTP"
 
   cors_configuration {
@@ -36,6 +36,7 @@ resource "aws_apigatewayv2_stage" "stage_http" {
   access_log_settings {
     destination_arn = aws_cloudwatch_log_group.api_logs.arn
     format          = jsonencode({
+      requestId = "$context.requestId"
       ip     = "$context.identity.sourceIp"
       time   = "$context.requestTime"
       method = "$context.httpMethod"

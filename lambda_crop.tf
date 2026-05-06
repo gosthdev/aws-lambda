@@ -1,6 +1,6 @@
 resource "aws_lambda_function" "crop_lambda" {
   filename      = data.archive_file.crop_lambda_zip.output_path
-  function_name = "crop-lambda"
+  function_name = "crop-lambda.${workspace}"
   role          = aws_iam_role.lambda_crop_role.arn
   handler       = "index.handler"
   code_sha256   = data.archive_file.crop_lambda_zip.output_base64sha256
@@ -37,12 +37,12 @@ data "archive_file" "crop_lambda_zip" {
 }
 
 resource "aws_cloudwatch_log_group" "crop_lambda_logs" {
-  name              = "/aws/lambda/crop-lambda"
+  name              = "/aws/lambda/lambda-crop"
   retention_in_days = 14
 }
 
 resource "aws_security_group" "sg_crop_lambda" {
-  name        = "crop-lambda"
+  name        = "sg-crop-lambda"
   description = "Permite a la lambda comunicarse con VPCEs de S3 y SQS"
   vpc_id      = aws_vpc.main_vpc.id
 

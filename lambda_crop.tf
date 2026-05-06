@@ -1,12 +1,12 @@
 resource "aws_lambda_function" "crop_lambda" {
   filename      = data.archive_file.crop_lambda_zip.output_path
   function_name = "crop-lambda"
-  role          = aws_iam_role.lambda_role.arn
+  role          = aws_iam_role.lambda_crop_role.arn
   handler       = "index.handler"
   code_sha256   = data.archive_file.crop_lambda_zip.output_base64sha256
 
   runtime = "nodejs20.x"
-  memory_size = 256
+  memory_size = 512
   timeout = 60
 
   environment {

@@ -44,13 +44,32 @@ resource "aws_iam_role_policy_attachment" "s3_upload_attach" {
 
 data "aws_iam_policy_document" "crop_lambda_policy_doc" {
   statement {
-    effect = "Allow"
-    principals {
-      type        = "Service"
-      identifiers = ["lambda.amazonaws.com"]
-    }
-    actions = ["sts:AssumeRole"]
+    effect    = "Allow"
+    actions   = ["s3:GetObject"]
+    resources = ["${aws_s3_bucket.s3_bucket.arn}/uploads/*"]
   }
+
+  statement {
+    effect    = "Allow"
+    actions   = ["s3:PutObject"]
+    resources = ["${aws_s3_bucket.s3_bucket.arn}/processed/*"]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "sqs:ReceiveMessage",
+      "sqs:DeleteMessage",
+      "sqs:ChangeMessageVisibility",
+      "sqs:GetQueueAttributes"
+    ]
+    resources = [aws_sqs_queue.main_queue.arn]
+  }
+}
+
+resource "aws_iam_role" "lambda_crop_role" {
+  name               = "crop-lambda-role"
+  assume_role_policy = data.aws_iam_policy_document.crop_lambda_policy_doc
 }
 
 resource "aws_iam_policy" "crop_lambda_policy" {
@@ -59,6 +78,7 @@ resource "aws_iam_policy" "crop_lambda_policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "crop_lambda_attach" {
-  role       = aws_iam_role.lambda_role.name
+  role       = aws_iam_role.lambda_crop_role.name
   policy_arn = aws_iam_policy.crop_lambda_policy.arn
 }
+#

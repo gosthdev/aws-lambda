@@ -33,7 +33,7 @@ data "aws_iam_policy_document" "s3_upload_policy_doc" {
 }
 
 resource "aws_iam_policy" "s3_upload_policy" {
-  name   = "UploadLambdaS3Policy-${local.environment}"
+  name_prefix = "UploadLambdaS3Policy-${local.environment}-"
   policy = data.aws_iam_policy_document.s3_upload_policy_doc.json
 }
 
@@ -83,7 +83,7 @@ resource "aws_iam_role_policy_attachment" "crop_vpc_access_policy" {
 }
 
 resource "aws_iam_policy" "crop_lambda_policy" {
-  name   = "CropLambdaPolicy-${local.environment}"
+  name_prefix = "CropLambdaPolicy-${local.environment}-"
   policy = data.aws_iam_policy_document.crop_lambda_policy_doc.json
 }
 

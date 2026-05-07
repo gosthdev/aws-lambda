@@ -1,25 +1,40 @@
 # aws-lambda
 
-## Multi-entorno (workspaces)
+## Lambda crop y sharp (Layer)
 
-Este repo esta listo para desplegar DEV, QA y PROD usando workspaces de Terraform. Los nombres de recursos incluyen el nombre del workspace, asi que los entornos pueden coexistir.
+`crop-lambda` usa `sharp`, por eso se necesita un Lambda Layer con `sharp` compilado para Amazon Linux.
+
+### Construir el layer con Docker
+
+```bash
+mkdir -p layer/nodejs
+
+docker run --rm -v "$PWD/layer:/layer" -w /layer/nodejs --entrypoint bash public.ecr.aws/lambda/nodejs:20 \
+	-lc "npm init -y && npm install sharp"
+
+cd layer
+zip -r sharp-layer.zip nodejs
+cd ..
+```
+
+## Multi-entorno (workspaces)
 
 ### Desplegar todos los workspaces
 
-Ejecuta esto desde la carpeta [aws/](aws/):
+Ejecuta en [aws/]:
 
 ```bash
 terraform init
 
-terraform workspace new dev 
+terraform workspace new dev
 terraform workspace select dev
 terraform apply
 
-terraform workspace new qa 
+terraform workspace new qa
 terraform workspace select qa
 terraform apply
 
-terraform workspace new prod 
+terraform workspace new prod
 terraform workspace select prod
 terraform apply
 ```
@@ -40,4 +55,4 @@ curl -X POST "https://<api-id>.execute-api.<region>.amazonaws.com/upload" \
 	-F "file=@/path/to/image.jpg"
 ```
 
-Esa subida solo dispara el flujo de DEV (su propio bucket, cola y lambdas). QA/PROD quedan inactivos hasta que llames a sus endpoints.
+Esa subida solo dispara el flujo de DEV 

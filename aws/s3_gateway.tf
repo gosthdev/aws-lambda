@@ -24,7 +24,7 @@ resource "aws_vpc_endpoint" "s3_gateway" {
 }
 
 resource "aws_security_group" "sqs_vpce_sg" {
-  name        = "sqs-vpce"
+  name        = "sqs-vpce-${local.environment}"
   description = "Permite trafico 443 desde la Lambda de crop al VPCE de SQS"
   vpc_id      = aws_vpc.main_vpc.id
 

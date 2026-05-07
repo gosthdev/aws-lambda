@@ -1,5 +1,5 @@
 resource "aws_apigatewayv2_api" "api_http" {
-  name          = "api-http.${workspace}"
+  name          = "${local.name_prefix}-api"
   protocol_type = "HTTP"
 
   cors_configuration {
@@ -48,7 +48,7 @@ resource "aws_apigatewayv2_stage" "stage_http" {
 
 #Revisar bonito
 resource "aws_cloudwatch_log_group" "api_logs" {
-  name              = "/aws/apigateway/http-api-logs"
+  name              = "/aws/apigateway/${local.name_prefix}-http-api-logs"
   retention_in_days = 14
 }
 

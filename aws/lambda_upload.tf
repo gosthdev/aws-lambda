@@ -1,6 +1,6 @@
 resource "aws_lambda_function" "upload_lambda" {
   filename      = data.archive_file.upload_lambda_zip.output_path
-  function_name = "upload-lambda.${workspace}"
+  function_name = "upload-lambda-${local.environment}"
   role          = aws_iam_role.lambda_role.arn
   handler       = "index.handler"
   code_sha256   = data.archive_file.upload_lambda_zip.output_base64sha256
@@ -33,17 +33,17 @@ resource "aws_lambda_function" "upload_lambda" {
 
 data "archive_file" "upload_lambda_zip" {
   type        = "zip"
-  source_dir  = "src/lambda_upload" 
-  output_path = "src/function.zip"
+  source_dir  = "../src/lambda_upload" 
+  output_path = "../src/function.zip"
 }
 
 resource "aws_cloudwatch_log_group" "lambda_logs" {
-  name              = "/aws/lambda/upload-lambda"
+  name              = "/aws/lambda/upload-lambda-${local.environment}"
   retention_in_days = 14 
 }
 
 resource "aws_security_group" "sg_upload_lambda" {
-  name        = "upload-lambda"
+  name        = "upload-lambda-${local.environment}"
   description = "Permite a la lambda comunicarse con VPCEs de S3"
   vpc_id      = aws_vpc.main_vpc.id
 
